@@ -1,0 +1,20 @@
+---
+devices:
+  Roman:
+    alias: "Sandbox Router01"
+    type: "router"
+    os: "iosxe"
+    platform: CAT9k_AOkv
+    credentials:
+      default:
+        username: ptcapo
+        password: 1E-18tcfK-3Im3
+      enable:
+        password: 1E-18tcfK-3Im3
+    connections:
+      cli:
+        protocol: ssh
+        ip: devnetsandboxiosxec9k.cisco.com
+        port: 22
+        arguments:
+          connection_timeout: 360
