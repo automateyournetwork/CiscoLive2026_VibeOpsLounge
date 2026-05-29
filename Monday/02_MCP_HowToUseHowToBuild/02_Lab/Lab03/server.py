@@ -23,10 +23,14 @@ logger = logging.getLogger("PyatsFastMCPServer")
 
 # --- Load Environment Variables ---
 load_dotenv()
-TESTBED_PATH = "testbed.yaml"
+TESTBED_PATH = os.environ.get("PYATS_TESTBED_PATH", "testbed.yaml")
 
-if not TESTBED_PATH or not os.path.exists(TESTBED_PATH):
-    logger.critical(f"❌ CRITICAL: PYATS_TESTBED_PATH environment variable not set or file not found: {TESTBED_PATH}")
+if not TESTBED_PATH:
+    logger.critical("❌ CRITICAL: PYATS_TESTBED_PATH environment variable is not set.")
+    sys.exit(1)
+
+if not os.path.exists(TESTBED_PATH):
+    logger.critical(f"❌ CRITICAL: PYATS_TESTBED_PATH file not found: {TESTBED_PATH}")
     sys.exit(1)
 
 logger.info(f"✅ Using testbed file: {TESTBED_PATH}")
