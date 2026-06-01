@@ -2,7 +2,6 @@
 
 import os
 import json
-from random import choice
 import time
 import subprocess
 import threading
@@ -152,33 +151,48 @@ def react_agent():
             choice = response.choices[0].message
 
             if choice.tool_calls:
-                tool_call = choice.tool_calls[0]
-                fname = tool_call.function.name
-                args = json.loads(tool_call.function.arguments)
-                tool_call_id = tool_call.id  # needed for the response message
-
-                tool_result = call_tool(fname, args)
-
-                messages.append({"role": "assistant", "content": None, "tool_calls": choice.tool_calls})
+                # Append the assistant message with ALL tool calls first
                 messages.append({
-                    "role": "tool",
-                    "tool_call_id": tool_call_id,
-                    "content": json.dumps(tool_result)
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": choice.tool_calls
                 })
 
+                # Loop over every tool call and respond to each one
+                for tool_call in choice.tool_calls:
+                    fname = tool_call.function.name
+                    args = json.loads(tool_call.function.arguments)
+                    tool_call_id = tool_call.id
+                    print(f"[AGENT] Calling MCP tool: {fname} with args: {args}")
+
+                    try:
+                        tool_result = call_tool(fname, args)
+                    except Exception as tool_err:
+                        tool_result = {"error": str(tool_err)}
+
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call_id,
+                        "content": json.dumps(tool_result)
+                    })
+
+                # All tool_call_ids are now satisfied — get the final response
                 final_response = client.chat.completions.create(
                     model="gpt-5.5",
                     messages=messages
                 )
                 print("\nAgent:", final_response.choices[0].message.content)
-                messages.append({"role": "assistant", "content": final_response.choices[0].message.content})
+                messages.append({
+                    "role": "assistant",
+                    "content": final_response.choices[0].message.content
+                })
 
             else:
                 print("\nAgent:", choice.content)
                 messages.append({"role": "assistant", "content": choice.content})
 
         except Exception as e:
-            error_msg = f"\u26a0\ufe0f Error during tool call or reply: {e}"
+            error_msg = f"⚠️ Error during tool call or reply: {e}"
             print("\nAgent:", error_msg)
             messages.append({"role": "assistant", "content": error_msg})
 
