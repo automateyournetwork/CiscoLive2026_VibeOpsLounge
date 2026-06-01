@@ -8,9 +8,9 @@ devices:
     credentials:
       default:
         username: ptcapo
-        password: Y006YFGc_aqddk_
+        password: 12-dLC_H3ackU9
       enable:
-        password: Y006YFGc_aqddk_
+        password: 12-dLC_H3ackU9
     connections:
       cli:
         protocol: ssh
@@ -18,3 +18,4 @@ devices:
         port: 22
         arguments:
           connection_timeout: 360
+          ssh_options: "-oKexAlgorithms=+diffie-hellman-group14-sha1 -oCiphers=+aes128-cbc"

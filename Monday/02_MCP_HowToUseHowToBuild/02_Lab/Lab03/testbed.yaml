@@ -8,9 +8,9 @@ devices:
     credentials:
       default:
         username: ptcapo
-        password: Y006YFGc_aqddk_
+        password: 12-dLC_H3ackU9
       enable:
-        password: Y006YFGc_aqddk_
+        password: 12-dLC_H3ackU9
     connections:
       cli:
         protocol: ssh

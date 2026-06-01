@@ -1,5 +1,20 @@
+import paramiko
 from genie.testbed import load
 import json
+
+# --- Patch Paramiko to support legacy Cisco SSH algorithms ---
+paramiko.Transport._preferred_kex = (
+    'diffie-hellman-group14-sha1',
+    'diffie-hellman-group-exchange-sha256',
+    'diffie-hellman-group-exchange-sha1',
+    'diffie-hellman-group14-sha256',
+)
+paramiko.Transport._preferred_ciphers = (
+    'aes128-cbc',
+    '3des-cbc',
+    'aes128-ctr',
+    'aes256-ctr',
+)
 
 # --- Load testbed file ---
 testbed = load("testbed.yaml")
